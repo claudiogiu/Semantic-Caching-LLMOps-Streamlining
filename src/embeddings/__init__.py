@@ -1,0 +1,1 @@
+"""Public API for components generating semantic vector representations and providing a unified interface to external embedding engines."""

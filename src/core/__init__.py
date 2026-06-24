@@ -1,0 +1,1 @@
+"""Public API for core orchestration components coordinating normalization, embedding, semantic lookup, fallback generation, and cache updates."""

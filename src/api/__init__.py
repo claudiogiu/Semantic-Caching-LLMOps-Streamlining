@@ -1,0 +1,1 @@
+"""Public API for request/response schemas, routing definitions, and API-level data structures."""
