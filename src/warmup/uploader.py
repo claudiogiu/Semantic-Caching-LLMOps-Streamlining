@@ -16,7 +16,7 @@ class Uploader:
         ttl (int): Expiration time, in seconds, applied to all records inserted during warmup.
 
     Methods:
-        upload(records: List[Dict[str, Any]]) -> None:
+        upload(records: List[Dict[str, Any]]) -> int:
             Uploads vector records to Redis in fixed‑size batches, ensuring sequential
             persistence of all provided entries.
     """
@@ -27,7 +27,7 @@ class Uploader:
         self.ttl: int = 604800 
         logger.info("Uploader initialized with RedisService instance.")
 
-    async def upload(self, records: List[Dict[str, Any]]) -> None:
+    async def upload(self, records: List[Dict[str, Any]]) -> int:
         if not records:
             raise ValueError("Record list is empty.")
 
@@ -37,6 +37,8 @@ class Uploader:
 
         total = len(records)
         logger.info(f"Uploading {total} records in batches of {self.batch_size}.")
+
+        inserted = 0
 
         for start in range(0, total, self.batch_size):
             end = start + self.batch_size
@@ -51,5 +53,7 @@ class Uploader:
                     entry["payload"],
                     ttl=self.ttl
                 )
+                inserted += 1
 
         logger.info("Upload to Redis completed.")
+        return inserted
