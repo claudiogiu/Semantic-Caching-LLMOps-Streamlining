@@ -74,7 +74,6 @@ async def root():
             "query": "/api/v1/cache/query",
             "flush": "/api/v1/cache",
             "delete_record": "/api/v1/cache/record",
-            "health": "/api/v1/cache/health",
         }
     }
 
