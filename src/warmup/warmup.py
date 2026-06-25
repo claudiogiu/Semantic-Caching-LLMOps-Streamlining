@@ -24,7 +24,7 @@ class Warmup:
         uploader (Uploader): Component responsible for uploading vector‑payload records to Redis.
     
     Methods:
-        run() -> None:
+        run() -> tuple[int, int]:
             Executes the warmup pipeline by loading dataset entries, normalizing questions,
             computing hashes, generating embeddings, constructing vector‑payload records,
             and uploading them to Redis in batch.
@@ -37,7 +37,7 @@ class Warmup:
         self.uploader: Uploader = Uploader(RedisService())
         logger.info("Warmup component initialized.")
 
-    async def run(self) -> None:
+    async def run(self) -> tuple[int, int]:
         logger.info("Warmup process started.")
 
         records: List[Dict[str, Any]] = self.loader.load()
@@ -74,9 +74,14 @@ class Warmup:
             logger.info(f"[{idx}] Record built: id={query_hash}")
             enriched.append(record)
 
-        logger.info(f"Computed embeddings for {len(enriched)} entries.")
+        processed = len(records)
+        logger.info(f"Computed embeddings for {processed} entries.")
         logger.info("Uploading records to Redis.")
 
-        await self.uploader.upload(enriched)
+        inserted = await self.uploader.upload(enriched)
 
-        logger.info("Warmup process completed.")
+        logger.info(
+            f"Warmup process completed."
+        )
+
+        return processed, inserted
