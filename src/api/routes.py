@@ -105,6 +105,7 @@ async def cache_delete_record(request: Request, payload: DeleteRecordRequest):
     """
     Delete a specific cache record identified by its hash‑based identifier.
     """
+    
     start = time.time()
 
     try:
