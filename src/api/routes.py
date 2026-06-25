@@ -32,14 +32,14 @@ async def cache_warmup(request: Request):
 
     try:
         warmup = Warmup()
-        await warmup.run()
+        processed, inserted = await warmup.run()
 
         execution_time_ms = (time.time() - start) * 1000
 
         return WarmupResponse(
             status=WarmupStatus.SUCCESS,
-            processed=0,
-            inserted=0,
+            processed=processed,
+            inserted=inserted,
             execution_time_ms=execution_time_ms,
         )
 
@@ -123,29 +123,3 @@ async def cache_delete_record(request: Request, payload: DeleteRecordRequest):
     except Exception as e:
         logger.error(f"Record deletion failed: {e}")
         raise HTTPException(status_code=500, detail="Record deletion failed")
-
-
-@router.get("/cache/health", response_model=CacheMaintenanceResponse, tags=["Cache"])
-async def cache_health(request: Request):
-    """
-    Perform a health check on the semantic cache and underlying services.
-    """
-
-    start = time.time()
-
-    try:
-        redis = RedisService()
-        await redis._client.ping()
-
-        execution_time_ms = (time.time() - start) * 1000
-
-        return CacheMaintenanceResponse(
-            status=PipelineStatus.COMPLETED,
-            operation=CacheOperation.HEALTH_CHECK,
-            details="Semantic cache and services are operational.",
-            execution_time_ms=execution_time_ms,
-        )
-
-    except Exception as e:
-        logger.error(f"Health check failed: {e}")
-        raise HTTPException(status_code=500, detail="Health check failed")
