@@ -26,4 +26,3 @@ class CacheOperation(str, Enum):
 
     FLUSH_ALL = "FLUSH_ALL"
     DELETE_RECORD = "DELETE_RECORD"
-    HEALTH_CHECK = "HEALTH_CHECK"
